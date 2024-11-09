@@ -5,3 +5,4 @@ dependencies:
   - groq
   - lxml
   - python=3.12
+  - python-dotenv
