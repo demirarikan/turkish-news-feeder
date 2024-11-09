@@ -1,0 +1,7 @@
+name: turkish-news-feeder
+channels:
+  - conda-forge
+dependencies:
+  - groq
+  - lxml
+  - python=3.12
