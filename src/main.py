@@ -1,9 +1,36 @@
 import dotenv
 import os
+from pydantic import BaseModel
+from typing import List
 
-dotenv.load_dotenv()
-key = os.getenv('GROQ_API_KEY')
-print(key)
+from llm import NewsSummary
+
+class News(BaseModel):
+    num_news: int
+    links: List[str]
+    content: NewsSummary
+
+class FeedEntry(BaseModel):
+    header: str
+    content: str
+    link: str
+
+class Feed(BaseModel):
+    website: str
+    entries: List[FeedEntry]
+
+
+class EntrySummary(BaseModel):
+    header_summary: str
+    content_summary: str
+    link: str
+
+class FeedSummary(BaseModel):
+    website: str
+    summary_entries: List[EntrySummary]
+
+
+
 
 # TODO: cronjob should run this main.py
 
