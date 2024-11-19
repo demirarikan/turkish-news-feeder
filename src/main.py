@@ -3,7 +3,7 @@ import os
 from pydantic import BaseModel
 from typing import List
 
-from llm import NewsSummary
+from src.llm import NewsSummary
 
 class News(BaseModel):
     num_news: int
