@@ -4,12 +4,22 @@ from pydantic import BaseModel
 from typing import List
 from datetime import datetime
 
-from scraper import RSSParser
+from rss_parser import NTVRssParser as RSSParser
 from llm import NewsSummary, GroqClient
 from email_client import EmailClient
 from models import Feed, FeedEntry, NewsSummary
 
 RSS_URL = "https://www.ntv.com.tr/gundem.rss"
+
+def get_char_num(feed: Feed):
+    num_chars = 0
+    for entry in feed.entries:
+        num_chars += len(entry.header)
+        num_chars += len(entry.content)
+        num_chars += 2 # newlines
+
+    num_chars += 100 # prompt
+    return num_chars
 
 class News(BaseModel):
     num_news: int
@@ -34,9 +44,8 @@ class FeedSummary(BaseModel):
 # TODO: use scraper to scrape rss feeds from atv, and other news feed
 
 parser = RSSParser(RSS_URL)
-entries = parser.get_entries_by_date(datetime.now())
-feed = parser.serialize_to_feed(entries)
-
+feed = parser.create_todays_feed()
+print(f'-> parsed {get_char_num(feed)}')
 
 client = GroqClient()
 # TODO: define preference in config.yml
@@ -64,6 +73,7 @@ for idx in header_indices:
     filtered_entries.append(feed.entries[idx])
 
 filtered_feed: Feed = Feed(website=feed.website, entries=filtered_entries)
+print(f'-> filtered feed {get_char_num(feed)}')
 
 summary: NewsSummary = client.summarize_feed(filtered_feed, model_name)
 
