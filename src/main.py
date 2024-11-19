@@ -67,13 +67,14 @@ if model_name is None:
     raise ValueError('no preferred model is available')
 
 # choose the most important headers
-header_indices: list[int] = client.choose_headers(feed, count=5, model_id=model_name)
+header_indices: list[int] = client.choose_headers(feed, count=3, model_id=model_name)
 filtered_entries: list[FeedEntry] = []
 for idx in header_indices:
     filtered_entries.append(feed.entries[idx])
 
 filtered_feed: Feed = Feed(website=feed.website, entries=filtered_entries)
-print(f'-> filtered feed {get_char_num(feed)}')
+print(f'-> filtered feed {get_char_num(filtered_feed)}')
+# print(f'{filtered_feed.model_dump()}')
 
 summary: NewsSummary = client.summarize_feed(filtered_feed, model_name)
 

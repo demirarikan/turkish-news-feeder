@@ -5,7 +5,7 @@ import feedparser
 from models import Feed, FeedEntry
 from bs4 import BeautifulSoup
 import requests
-from base_rss_parser import BaseRssParser
+from .base_rss_parser import BaseRssParser
 from typing import List, Any
 
 class NTVRssParser(BaseRssParser):

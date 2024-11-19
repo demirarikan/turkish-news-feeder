@@ -1,9 +1,8 @@
 import os, json, dotenv
 from typing import List
 from groq import Groq
-from scraper import Feed
 
-from models import NewsSummary, HeaderIndices
+from models import NewsSummary, HeaderIndices, Feed
 
 
 class GroqClient():
