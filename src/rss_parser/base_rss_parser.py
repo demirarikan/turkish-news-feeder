@@ -1,8 +1,8 @@
 import re
 from abc import ABC, abstractmethod
 from datetime import datetime
-from src.main import Feed, FeedEntry
 from typing import List, Any
+from models import Feed
 
 class BaseRssParser(ABC):
     def __init__(self, rss_url: str):
@@ -10,7 +10,7 @@ class BaseRssParser(ABC):
 
     def html_strip(self, html_str: str) -> str:
         return re.sub(r"<.*?>", "", html_str)
-    
+
     @abstractmethod
     def get_entries_by_date(self, date: datetime) -> List[Any]:
         """Get entries that are on the same day as the given date
@@ -40,5 +40,5 @@ class BaseRssParser(ABC):
     def create_feed_from_feed_entries(self, entries: List[Any]) -> Feed:
         pass
 
-    
+
 
