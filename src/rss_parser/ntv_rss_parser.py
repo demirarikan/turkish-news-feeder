@@ -2,10 +2,10 @@ import re
 from datetime import datetime
 
 import feedparser
-from src.main import Feed, FeedEntry
+from models import Feed, FeedEntry
 from bs4 import BeautifulSoup
 import requests
-from base_rss_parser import BaseRssParser
+from .base_rss_parser import BaseRssParser
 from typing import List, Any
 
 class NTVRssParser(BaseRssParser):
@@ -20,7 +20,7 @@ class NTVRssParser(BaseRssParser):
 
     def html_strip(self, html_str: str) -> str:
         return re.sub(r"<.*?>", "", html_str)
-    
+
     def remove_escape_chars(self, str: str) -> str:
         str = str.replace("\n", "")
         str = str.replace("\r", "")
@@ -38,7 +38,7 @@ class NTVRssParser(BaseRssParser):
             ):
                 entries.append(entry)
         return entries
-    
+
     def create_feed_entry_from_feedparser(self, entry: Any) -> FeedEntry:
         article_url = entry.link
         response = requests.get(article_url)
@@ -57,14 +57,14 @@ class NTVRssParser(BaseRssParser):
                 content = subtitle + "\n" + div_tag.get_text()
                 # remove \n and \r
                 content = self.remove_escape_chars(content)
-            
+
             return FeedEntry(header=title, content=content, link=article_url)
         else:
             raise ValueError("No <article> tag found in the article!")
 
     def create_feed_from_feed_entries(self, feed_entries: List[FeedEntry]) -> Feed:
         return Feed(website=self.rss_url, entries=feed_entries)
-    
+
     def create_todays_feed(self):
         entries = self.get_entries_by_date(datetime.now())
         feed_entries = []
@@ -76,7 +76,7 @@ class NTVRssParser(BaseRssParser):
             feed_entries.append(feed_entry)
         feed = self.create_feed_from_feed_entries(feed_entries)
         return feed
-        
+
 
 # if __name__ == "__main__":
 #     import json
