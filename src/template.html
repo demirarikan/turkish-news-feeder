@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+      }
+      .header {
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 20px;
+      }
+      .content {
+        margin-bottom: 10px;
+      }
+      .intro, .outro {
+        font-style: italic;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="intro">
+      Haber bültenimize hoş geldiniz! İşte en son güncellemeler:
+    </div>
+
+    {% for idx in range(summary.num_summaries) %}
+      <div class="header">{{ summary.headers[idx] }}</div>
+      <div class="content">{{ summary.summaries[idx] }}</div>
+    {% endfor %}
+
+    <div class="outro">
+      Okuduğunuz için teşekkür ederiz! Daha fazla güncelleme için bizi izlemeye devam edin. Güne harika bir başlangıç yapmanızı dileriz!
+
+      Not: Verilen haberlerin doğruluğunu iddia etmiyoruz.
+    </div>
+  </body>
+</html>
