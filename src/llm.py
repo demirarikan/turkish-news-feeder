@@ -2,6 +2,7 @@ import os, json, dotenv
 from typing import List
 from pydantic import BaseModel
 from groq import Groq
+from main import Feed
 
 
 class NewsSummary(BaseModel):
@@ -11,6 +12,19 @@ class NewsSummary(BaseModel):
 
 class GroqClient():
     client: Groq
+    schema_example = {
+        "num_summaries": 3,
+        "headers": [
+            "Example Header 1",
+            "Example Header 2",
+            "Example Header 3"
+            ],
+        "summaries": [
+            "Example summary 1.",
+            "Example summary 2.",
+            "Example summary 3."
+            ]
+    }
 
     def __init__(self, key=None):
         if key is None:
@@ -45,26 +59,46 @@ class GroqClient():
 
         @return model's summary of the news
         """
-        schema_example = {
-            "num_summaries": 3,
-            "headers": [
-                "Example Header 1",
-                "Example Header 2",
-                "Example Header 3"
-                ],
-            "summaries": [
-                "Example summary 1.",
-                "Example summary 2.",
-                "Example summary 3."
-                ]
-            }
+        chat_completion = self.client.chat.completions.create(
+            messages = [
+                {
+                    'role': 'system',
+                    'content': f'Sen, önemli haberleri özetleme konusunda uzmanlaşmış bir yapay zeka özetleyicisisin ve özetleri JSON formatında çıkartıyorsun.\nJSON, şu şemayı kullanmalıdır:\n{json.dumps(NewsSummary.model_json_schema(), indent=2)}\n\nÖrnek bir çıktı:\n{json.dumps(self.schema_example, indent=2)}',
+                },
+                {
+                    'role': 'user',
+                    'content': f'Aşağıdaki haber akışını özetle:\n{news_feed}'
+                }
+            ],
+            model = model_id,
+            temperature = 0,
+            stream = False,
+            response_format = { 'type': 'json_object' }
+        )
+        content = chat_completion.choices[0].message.content
+        if content is None:
+            raise ValueError('model failed to return a valid response')
 
+        return NewsSummary.model_validate_json(content)
+
+    def summarize_feed(self, feed: Feed, model_id: str) -> NewsSummary:
+        """
+        @param feed: Feed object containing website url and entries of the news
+        @param model_id: which model to use to summarize the news
+
+        @return model's summary of the news as NewsSummary object
+        """
+
+        # concat the headers and contents with newline and each entry (header,content) is separated
+        # with '\n\n'
+        news_feed = [ f'{entry.header}\n{entry.content}' for entry in feed.entries ]
+        news_feed = '\n\n'.join(news_feed)
 
         chat_completion = self.client.chat.completions.create(
             messages = [
                 {
                     'role': 'system',
-                    'content': f'Sen, önemli haberleri özetleme konusunda uzmanlaşmış bir yapay zeka özetleyicisisin ve özetleri JSON formatında çıkartıyorsun.\nJSON, şu şemayı kullanmalıdır:\n{json.dumps(NewsSummary.model_json_schema(), indent=2)}\n\nÖrnek bir çıktı:\n{json.dumps(schema_example, indent=2)}',
+                    'content': f'Sen, önemli haberleri özetleme konusunda uzmanlaşmış bir yapay zeka özetleyicisisin ve özetleri JSON formatında çıkartıyorsun.\nJSON, şu şemayı kullanmalıdır:\n{json.dumps(NewsSummary.model_json_schema(), indent=2)}\n\nÖrnek bir çıktı:\n{json.dumps(self.schema_example, indent=2)}',
                 },
                 {
                     'role': 'user',
