@@ -1,5 +1,7 @@
 # Turkish News Feeder
 
+![Pipeline](assets/initial-pipeline.png)
+
 Retrieve daily Turkish news in you mailbox summarized by mainstream LLMs.
 
 # Setup
