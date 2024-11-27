@@ -4,7 +4,7 @@ from urllib.parse import urlparse
 
 from base_rss_parser import BaseRssParser
 
-from src.main import Feed, FeedEntry
+from models import Feed, FeedEntry
 
 
 class CumhuriyetRssParser(BaseRssParser):

@@ -3,7 +3,7 @@ from typing import Any, List
 
 from base_rss_parser import BaseRssParser
 
-from src.main import Feed, FeedEntry
+from models import Feed, FeedEntry
 
 
 class SozcuRssParser(BaseRssParser):

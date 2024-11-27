@@ -7,7 +7,7 @@ import feedparser
 import requests
 from bs4 import BeautifulSoup
 
-from src.main import Feed, FeedEntry
+from models import Feed, FeedEntry
 
 
 class BaseRssParser(ABC):
