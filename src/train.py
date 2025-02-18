@@ -46,7 +46,7 @@ class Label(IntEnum):
     POSITIVE = 2
 
 # Load dataset (Example: Replace with actual data)
-df = pd.read_csv("data.csv")
+df = pd.read_csv("./data/data.csv")
 num_negative = len(df[df["label"] == Label.NEGATIVE])
 num_neutral = len(df[df["label"] == Label.NEUTRAL])
 num_positive = len(df[df["label"] == Label.POSITIVE])
